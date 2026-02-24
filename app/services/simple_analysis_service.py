@@ -357,6 +357,7 @@ def _get_default_provider_by_model(model_name: str) -> str:
         # DeepSeek
         'deepseek-chat': 'deepseek',
         'deepseek-coder': 'deepseek',
+        'deepseek-v3': 'deepseek',
 
         # 智谱AI
         'glm-4': 'zhipu',

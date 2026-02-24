@@ -43,6 +43,7 @@ async def submit_single_analysis(
     background_tasks: BackgroundTasks,
     user: dict = Depends(get_current_user)
 ):
+    print("===00000000000🚀 submit_single_analysis called==",request.model_dump())
     """提交单股分析任务 - 使用 BackgroundTasks 异步执行"""
     try:
         logger.info(f"🎯 收到单股分析请求")
@@ -61,12 +62,10 @@ async def submit_single_analysis(
         async def run_analysis_task():
             """包装函数：在后台运行分析任务"""
             try:
-                logger.info(f"🚀 [BackgroundTask] 开始执行分析任务: {task_id}")
-                logger.info(f"📝 [BackgroundTask] task_id={task_id}, user_id={user_id}")
+                logger.info(f"===📝 [BackgroundTask]  开始执行分析任务 task_id={task_id}, user_id={user_id}")
                 logger.info(f"📝 [BackgroundTask] request={request}")
 
                 # 重新获取服务实例，确保在正确的上下文中
-                logger.info(f"🔧 [BackgroundTask] 正在获取服务实例...")
                 service = get_simple_analysis_service()
                 logger.info(f"✅ [BackgroundTask] 服务实例获取成功: {id(service)}")
 

@@ -388,4 +388,4 @@ A: 06_CODE_EXAMPLES_AND_PRACTICE.md 中有60+示例
 ---
 
 **祝你学习顺利！如有任何问题，欢迎反馈。** ✨
-
+启动命令 ：python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
