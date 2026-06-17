@@ -88,6 +88,15 @@ const routes: RouteRecordRaw[] = [
           title: '股票筛选',
           requiresAuth: true
         }
+      },
+      {
+        path: 'ai',
+        name: 'AIScreening',
+        component: () => import('@/views/Screening/AIScreening.vue'),
+        meta: {
+          title: 'AI 智能筛选',
+          requiresAuth: true
+        }
       }
     ]
   },

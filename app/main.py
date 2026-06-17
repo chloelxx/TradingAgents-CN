@@ -730,6 +730,10 @@ app.include_router(social_media.router, tags=["social-media"])
 app.include_router(internal_messages.router, tags=["internal-messages"])
 
 
+# AI 股票筛选路由
+from app.routers import search as search_router
+app.include_router(search_router.router, prefix="/api/search", tags=["search"])
+
 @app.get("/")
 async def root():
     """根路径，返回API信息"""
