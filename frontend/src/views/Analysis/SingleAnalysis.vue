@@ -948,8 +948,8 @@ const submitAnalysis = async () => {
         include_sentiment: analysisForm.includeSentiment,
         include_risk: analysisForm.includeRisk,
         language: analysisForm.language,
-        quick_analysis_model: 'deepseek-v3' || modelSettings.value.quickAnalysisModel,
-        deep_analysis_model: 'deepseek-v3' || modelSettings.value.deepAnalysisModel
+        quick_analysis_model: 'deepseek-v4-pro' || modelSettings.value.quickAnalysisModel,
+        deep_analysis_model: 'deepseek-v4-pro' || modelSettings.value.deepAnalysisModel
       }
     }
 

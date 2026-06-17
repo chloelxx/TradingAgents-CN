@@ -52,7 +52,7 @@ cd TradingAgents-CN
 python -m venv venv
 
 # 激活虚拟环境（Windows）
-venv\Scripts\activate
+.venv\Scripts\activate
 
 # 激活虚拟环境（Linux/Mac）
 source venv/bin/activate
@@ -97,8 +97,11 @@ asyncio.run(user_service.create_admin_user())
 ### 第5步：启动后端服务
 
 ```bash
-# 开发模式（有热重载）
+# 开发模式（有热重载） - 建议在开发环境中使用 这个--reload 参数会让应用在代码变化时自动重启，然后会检测文件的变化，导致logs，watchfiles日志过多
 python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+
+# 开发模式（无热重载）
+python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --log-level warning
 
 # 或使用提供的启动脚本
 ./start_backend.ps1  # Windows PowerShell
@@ -134,6 +137,8 @@ open http://localhost:5173  # Mac
 start http://localhost:5173 # Windows
 ```
 
+
+登入用户名：admin 密码：admin123
 ---
 
 ## 🐳 Docker容器化部署

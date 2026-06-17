@@ -55,7 +55,7 @@ class UnifiedNewsAnalyzer:
         
         # 🔍 添加详细的结果调试日志
         logger.info(f"[统一新闻工具] 📊 新闻获取完成，结果长度: {len(result)} 字符")
-        logger.info(f"[统一新闻工具] 📋 返回结果预览 (前1000字符): {result[:1000]}")
+        logger.info(f"[统一新闻工具] 📋 返回结果预览 (前1000字符): {result[:100]}")
         
         # 如果结果为空或过短，记录警告
         if not result or len(result.strip()) < 50:

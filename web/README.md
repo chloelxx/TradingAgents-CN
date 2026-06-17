@@ -33,7 +33,7 @@
 # 安装虚拟环境
 python -m venv .venv
 # 激活虚拟环境
-.\env\Scripts\activate  # Windows
+.venv\Scripts\activate  # Windows
 source env/bin/activate  # Linux/macOS
 
 # 确保已安装依赖

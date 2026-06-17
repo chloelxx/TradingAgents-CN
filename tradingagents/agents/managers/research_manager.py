@@ -88,8 +88,8 @@ def create_research_manager(llm, memory):
         response_length = len(response.content) if response and hasattr(response, 'content') else 0
         estimated_output_tokens = int(response_length / 1.8)
 
-        logger.info(f"⏱️ [Research Manager] LLM调用耗时: {elapsed_time:.2f}秒")
-        logger.info(f"📊 [Research Manager] 响应统计: {response_length} 字符, 估算~{estimated_output_tokens} tokens")
+        # logger.info(f"⏱️ [Research Manager] LLM调用耗时: {elapsed_time:.2f}秒")
+        # logger.info(f"📊 [Research Manager] 响应统计: {response_length} 字符, 估算~{estimated_output_tokens} tokens")
 
         new_investment_debate_state = {
             "judge_decision": response.content,
