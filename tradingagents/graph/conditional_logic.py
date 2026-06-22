@@ -206,7 +206,7 @@ class ConditionalLogic:
 
         # 🔍 详细日志
         logger.info(f"🔍 [投资辩论控制] 当前发言次数: {current_count}, 最大次数: {max_count} (配置轮次: {self.max_debate_rounds})")
-        logger.info(f"🔍 [投资辩论控制] 当前发言者: {current_speaker}")
+        logger.info(f"🔍 [投资辩论控制] 当前发言者===: {current_speaker[:20]}...")
 
         if current_count >= max_count:
             logger.info(f"✅ [投资辩论控制] 达到最大次数，结束辩论 -> Research Manager")

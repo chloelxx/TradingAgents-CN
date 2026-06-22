@@ -1254,7 +1254,7 @@ class DataSourceManager:
 
                 duration = time.time() - start_time
                 logger.info(f"🔍 [DataSourceManager详细日志] 调用完成，耗时: {duration:.3f}秒")
-                logger.info(f"🔍 [股票代码追踪] 返回结果前200字符: {result[:200] if result else 'None'}")
+                logger.info(f"🔍 [股票代码追踪] 返回结果前20字符: {result[:20] if result else 'None'}")
                 logger.debug(f"📊 [Tushare] 调用完成: 耗时={duration:.2f}s, 结果长度={len(result) if result else 0}")
 
                 return result
@@ -2167,7 +2167,7 @@ def get_china_stock_data_unified(symbol: str, start_date: str, end_date: str) ->
         lines = result.split('\n')
         data_lines = [line for line in lines if '2025-' in line and symbol in line]
         logger.info(f"🔍 [股票代码追踪] 返回结果统计: 总行数={len(lines)}, 数据行数={len(data_lines)}, 结果长度={len(result)}字符")
-        logger.info(f"🔍 [股票代码追踪] 返回结果前500字符: {result[:500]}")
+        logger.info(f"🔍 [股票代码追踪] 返回结果前50字符: {result[:50]}")
         if len(data_lines) > 0:
             logger.info(f"🔍 [股票代码追踪] 数据行示例: 第1行='{data_lines[0][:100]}', 最后1行='{data_lines[-1][:100]}'")
     else:

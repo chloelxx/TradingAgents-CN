@@ -28,7 +28,7 @@ def _get_company_name_for_social_media(ticker: str, market_info: dict) -> str:
             from tradingagents.dataflows.interface import get_china_stock_info_unified
             stock_info = get_china_stock_info_unified(ticker)
 
-            logger.debug(f"📊 [社交媒体分析师] 获取股票信息返回: {stock_info[:200] if stock_info else 'None'}...")
+            # logger.debug(f"📊 [社交媒体分析师] 获取股票信息返回: {stock_info[:200] if stock_info else 'None'}...")
 
             # 解析股票名称
             if stock_info and "股票名称:" in stock_info:

@@ -91,8 +91,16 @@
                     type="date"
                     placeholder="选择分析基准日期"
                     size="large"
-                    style="width: 100%"
+                    style="width: 40%"
                     :disabled-date="disabledDate"
+                  />
+                </el-form-item>
+                <el-form-item label="名称">
+                  <el-input
+                    v-model="analysisForm.name"
+                    placeholder="请输入股票名称"
+                    size="large"
+                    style="width: 40%"
                   />
                 </el-form-item>
               </div>
@@ -731,6 +739,7 @@ type MarketType = 'A股' | '美股' | '港股'
 interface AnalysisForm {
   stockCode: string
   symbol: string
+  name?: string
   market: MarketType
   analysisDate: Date
   researchDepth: number
@@ -804,6 +813,7 @@ const modelRecommendation = ref<{
 const analysisForm = reactive<AnalysisForm>({
   stockCode: '',  // 保留用于表单绑定
   symbol: '',     // 标准化后的代码
+  name: '',       // 股票名称，从股票代码获取后填充
   market: 'A股',
   analysisDate: new Date(),
   researchDepth: 3, // 默认选中3级标准分析（推荐），将在 onMounted 中从用户偏好加载
@@ -1431,6 +1441,7 @@ const downloadReport = async (format: string = 'markdown') => {
     const url = window.URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
+    const name = analysisForm.name || ''
     const code =
       analysisResults.value?.stock_code ||
       analysisResults.value?.stock_symbol ||
@@ -1440,7 +1451,7 @@ const downloadReport = async (format: string = 'markdown') => {
 
     // 根据格式设置文件扩展名
     const ext = getFileExtension(format)
-    a.download = `${String(code)}_分析报告_${String(dateStr).slice(0, 10)}.${ext}`
+    a.download = `${name}${String(code)}_分析报告_${String(dateStr).slice(0, 10)}.${ext}`
 
     document.body.appendChild(a)
     a.click()

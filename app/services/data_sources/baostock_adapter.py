@@ -8,8 +8,10 @@ import pandas as pd
 
 from .base import DataSourceAdapter
 
+# __name__ 是当前模块的名称,当前模块名是从根目录开始的完整模块路径，相当于app.services.data_sources.baostock_adapter，用于日志记录器
 logger = logging.getLogger(__name__)
-
+# 禁用 BaoStock 相关日志
+logging.getLogger('__name__').disabled = True
 
 class BaoStockAdapter(DataSourceAdapter):
     """BaoStockdata source adapter"""

@@ -23,6 +23,7 @@ from app.services.basics_sync import add_financial_metrics as _add_financial_met
 
 
 logger = logging.getLogger(__name__)
+logging.disabled = True
 
 # Collection names
 COLLECTION_NAME = "stock_basic_info"

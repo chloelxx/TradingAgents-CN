@@ -372,9 +372,8 @@ def create_fundamentals_analyst(llm, toolkit):
         logger.info(f"🤖 [基本面分析师] - 消息类型: {type(result).__name__}")
         logger.info(f"🤖 [基本面分析师] - 内容长度: {len(result.content) if hasattr(result, 'content') else 0}")
         if hasattr(result, 'content') and result.content:
-            # 🔥 调试模式：打印完整内容，不截断
-            logger.info(f"🤖 [基本面分析师] - 完整内容:")
-            logger.info(f"{result.content}")
+            # 🔥 调试模式：打印部分内容，截断
+            logger.info(f"🤖 [基本面分析师] - 完整内容: {result.content[:50]}...")
         
         # 🔍 [调试日志] 打印tool_calls的详细信息
         # 详细记录 LLM 返回结果

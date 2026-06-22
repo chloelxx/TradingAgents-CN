@@ -31,7 +31,7 @@ def _get_company_name(ticker: str, market_info: dict) -> str:
             from tradingagents.dataflows.interface import get_china_stock_info_unified
             stock_info = get_china_stock_info_unified(ticker)
 
-            logger.debug(f"📊 [市场分析师] 获取股票信息返回: {stock_info[:200] if stock_info else 'None'}...")
+            logger.debug(f"📊 [市场分析师] 获取股票信息返回: {stock_info[:20] if stock_info else 'None'}...")
 
             # 解析股票名称
             if stock_info and "股票名称:" in stock_info:
@@ -230,12 +230,12 @@ def create_market_analyst(llm, toolkit):
             msg_type = type(msg).__name__
             # 🔥 修复：更安全地提取消息内容
             if hasattr(msg, 'content'):
-                msg_content = str(msg.content)[:500]  # 增加到500字符以便查看完整内容
+                msg_content = str(msg.content)[:50]  # 增加到500字符以便查看完整内容
             elif isinstance(msg, tuple) and len(msg) >= 2:
                 # 处理旧格式的元组消息 ("human", "content")
-                msg_content = f"[元组消息] 类型={msg[0]}, 内容={str(msg[1])[:500]}"
+                msg_content = f"[元组消息] 类型={msg[0]}, 内容={str(msg[1])[:50]}"
             else:
-                msg_content = str(msg)[:500]
+                msg_content = str(msg)[:50]
             logger.info(f"📊 [市场分析师] 消息[{i}] 类型={msg_type}, 内容={msg_content}")
         logger.info(f"📊 [市场分析师] ========== 消息列表结束 ==========")
 
@@ -249,7 +249,7 @@ def create_market_analyst(llm, toolkit):
         # 打印LLM响应
         logger.info(f"📊 [市场分析师] ========== LLM响应开始 ==========")
         logger.info(f"📊 [市场分析师] 响应类型: {type(result).__name__}")
-        logger.info(f"📊 [市场分析师] 响应内容: {str(result.content)[:1000]}...")
+        logger.info(f"📊 [市场分析师] 响应内容: {str(result.content)[:10]}...")
         if hasattr(result, 'tool_calls') and result.tool_calls:
             logger.info(f"📊 [市场分析师] 工具调用: {result.tool_calls}")
         logger.info(f"📊 [市场分析师] ========== LLM响应结束 ==========")
@@ -298,7 +298,7 @@ def create_market_analyst(llm, toolkit):
                 # 没有工具调用，直接使用LLM的回复
                 report = result.content
                 logger.info(f"📊 [市场分析师] ✅ 直接回复（无工具调用），长度: {len(report)}")
-                logger.debug(f"📊 [DEBUG] 直接回复内容预览: {report[:200]}...")
+                logger.debug(f"📊 [DEBUG] 直接回复内容预览: {report[:20]}...")
             else:
                 # 有工具调用，执行工具并生成完整分析报告
                 logger.info(f"📊 [市场分析师] 🔧 检测到工具调用: {[call.get('name', 'unknown') for call in result.tool_calls]}")

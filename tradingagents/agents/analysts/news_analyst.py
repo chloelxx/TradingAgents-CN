@@ -213,11 +213,11 @@ def create_news_analyst(llm, toolkit):
 
                 pre_fetched_news = unified_news_tool(stock_code=ticker, max_news=10, model_info=model_info)
 
-                logger.info(f"[新闻分析师] 📋 预处理返回结果长度: {len(pre_fetched_news) if pre_fetched_news else 0} 字符")
-                logger.info(f"[新闻分析师] 📄 预处理返回结果预览 (前500字符): {pre_fetched_news[:500] if pre_fetched_news else 'None'}")
+                # logger.info(f"[新闻分析师] 📋 预处理返回结果长度: {len(pre_fetched_news) if pre_fetched_news else 0} 字符")
+                # logger.info(f"[新闻分析师] 📄 预处理返回结果预览 (前500字符): {pre_fetched_news[:500] if pre_fetched_news else 'None'}")
 
                 if pre_fetched_news and len(pre_fetched_news.strip()) > 100:
-                    logger.info(f"[新闻分析师] ✅ 预处理成功获取新闻: {len(pre_fetched_news)} 字符")
+                    # logger.info(f"[新闻分析师] ✅ 预处理成功获取新闻: {len(pre_fetched_news)} 字符")
 
                     # 直接基于预获取的新闻生成分析，跳过工具调用
                     # 🔧 重要：构建不包含工具调用指导的系统提示词
@@ -245,8 +245,8 @@ def create_news_analyst(llm, toolkit):
 4. 投资建议"""
 
                     logger.info(f"[新闻分析师] 🔄 使用预获取新闻数据直接生成分析...")
-                    logger.info(f"[新闻分析师] 📝 系统提示词长度: {len(analysis_system_prompt)} 字符")
-                    logger.info(f"[新闻分析师] 📝 用户提示词长度: {len(enhanced_prompt)} 字符")
+                    # logger.info(f"[新闻分析师] 📝 系统提示词长度: {len(analysis_system_prompt)} 字符")
+                    # logger.info(f"[新闻分析师] 📝 用户提示词长度: {len(enhanced_prompt)} 字符")
 
                     llm_start_time = datetime.now()
                     # 🔧 重要：传递系统消息和用户消息，不包含工具调用
@@ -263,7 +263,7 @@ def create_news_analyst(llm, toolkit):
                     if hasattr(result, 'content') and result.content:
                         report = result.content
                         logger.info(f"[新闻分析师] ✅ 预处理模式成功，报告长度: {len(report)} 字符")
-                        logger.info(f"[新闻分析师] 📄 报告预览 (前300字符): {report[:300]}")
+                        # logger.info(f"[新闻分析师] 📄 报告预览 (前300字符): {report[:300]}")
 
                         # 跳转到最终处理
                         from langchain_core.messages import AIMessage
@@ -334,7 +334,7 @@ def create_news_analyst(llm, toolkit):
 
             if current_tool_calls == 0:
                 logger.warning(f"[新闻分析师] ⚠️ {llm.__class__.__name__} 没有调用任何工具，启动补救机制...")
-                logger.warning(f"[新闻分析师] 📄 LLM原始响应内容 (前500字符): {result.content[:500] if hasattr(result, 'content') else 'No content'}")
+                # logger.warning(f"[新闻分析师] 📄 LLM原始响应内容 (前500字符): {result.content[:500] if hasattr(result, 'content') else 'No content'}")
 
                 try:
                     # 强制获取新闻数据
@@ -343,11 +343,11 @@ def create_news_analyst(llm, toolkit):
 
                     forced_news = unified_news_tool(stock_code=ticker, max_news=10, model_info=model_info)
 
-                    logger.info(f"[新闻分析师] 📋 强制获取返回结果长度: {len(forced_news) if forced_news else 0} 字符")
-                    logger.info(f"[新闻分析师] 📄 强制获取返回结果预览 (前500字符): {forced_news[:500] if forced_news else 'None'}")
+                    # logger.info(f"[新闻分析师] 📋 强制获取返回结果长度: {len(forced_news) if forced_news else 0} 字符")
+                    # logger.info(f"[新闻分析师] 📄 强制获取返回结果预览 (前500字符): {forced_news[:500] if forced_news else 'None'}")
 
                     if forced_news and len(forced_news.strip()) > 100:
-                        logger.info(f"[新闻分析师] ✅ 强制获取新闻成功: {len(forced_news)} 字符")
+                        # logger.info(f"[新闻分析师] ✅ 强制获取新闻成功: {len(forced_news)} 字符")
 
                         # 基于真实新闻数据重新生成分析
                         forced_prompt = f"""
@@ -363,14 +363,14 @@ def create_news_analyst(llm, toolkit):
 """
 
                         logger.info(f"[新闻分析师] 🔄 基于强制获取的新闻数据重新生成完整分析...")
-                        logger.info(f"[新闻分析师] 📝 强制提示词长度: {len(forced_prompt)} 字符")
+                        # logger.info(f"[新闻分析师] 📝 强制提示词长度: {len(forced_prompt)} 字符")
 
                         forced_result = llm.invoke([{"role": "user", "content": forced_prompt}])
 
                         if hasattr(forced_result, 'content') and forced_result.content:
                             report = forced_result.content
                             logger.info(f"[新闻分析师] ✅ 强制补救成功，生成基于真实数据的报告，长度: {len(report)} 字符")
-                            logger.info(f"[新闻分析师] 📄 报告预览 (前300字符): {report[:300]}")
+                            # logger.info(f"[新闻分析师] 📄 报告预览 (前300字符): {report[:300]}")
                         else:
                             logger.warning(f"[新闻分析师] ⚠️ 强制补救LLM返回为空，使用原始结果")
                             report = result.content if hasattr(result, 'content') else ""
