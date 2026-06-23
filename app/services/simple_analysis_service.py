@@ -2409,7 +2409,8 @@ class SimpleAnalysisService:
                         'fundamentals_report',
                         'investment_plan',
                         'trader_investment_plan',
-                        'final_trade_decision'
+                        'final_trade_decision',
+                        'china_market_report'
                     ]
 
                     # 从state中提取报告内容

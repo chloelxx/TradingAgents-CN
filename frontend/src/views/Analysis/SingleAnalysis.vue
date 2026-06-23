@@ -958,8 +958,8 @@ const submitAnalysis = async () => {
         include_sentiment: analysisForm.includeSentiment,
         include_risk: analysisForm.includeRisk,
         language: analysisForm.language,
-        quick_analysis_model: 'deepseek-v4-pro' || modelSettings.value.quickAnalysisModel,
-        deep_analysis_model: 'deepseek-v4-pro' || modelSettings.value.deepAnalysisModel
+        quick_analysis_model: "deepseek-v4-pro" || modelSettings.value.quickAnalysisModel,
+        deep_analysis_model: "deepseek-v4-pro" || modelSettings.value.deepAnalysisModel
       }
     }
 
@@ -1294,6 +1294,8 @@ const getAnalysisReports = (data: any) => {
 
     // 最终决策 (1个)
     { key: 'final_trade_decision', title: '🎯 最终交易决策', category: '最终决策' },
+     // china_market_report 顶级投资专家 (1个)
+    { key: 'china_market_report', title: '🎯 顶级投资专家方案', category: '顶级专家' },
 
     // 兼容旧格式
     { key: 'investment_plan', title: '📋 投资建议', category: '其他' },
@@ -1301,9 +1303,12 @@ const getAnalysisReports = (data: any) => {
     { key: 'risk_debate_state', title: '⚖️ 风险管理团队（旧）', category: '其他' }
   ]
 
+  console.log('reportsData===',reportsData)
   // 遍历所有可能的报告
   reportMappings.forEach(mapping => {
     const content = reportsData[mapping.key]
+    console.log('mapping.key==',mapping)
+    console.log('content==',content)
     if (content) {
       console.log(`📊 找到报告: ${mapping.key} -> ${mapping.title}`)
       reports.push({

@@ -70,6 +70,10 @@ class AgentState(MessagesState):
     news_tool_call_count: Annotated[int, "News analyst tool call counter"]
     sentiment_tool_call_count: Annotated[int, "Social media analyst tool call counter"]
     fundamentals_tool_call_count: Annotated[int, "Fundamentals analyst tool call counter"]
+    china_market_tool_call_count: Annotated[int, "China market analyst tool call counter"]
+
+    # 中国市场汇总分析报告
+    china_market_report: Annotated[str, "Summary report from the China Market Analyst"]
 
     # researcher team discussion step
     investment_debate_state: Annotated[

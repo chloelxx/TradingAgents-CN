@@ -142,9 +142,6 @@ def create_fundamentals_analyst(llm, toolkit):
         logger.info(f"📊 [基本面分析师] 正在分析股票: {ticker}")
 
         # 添加详细的股票代码追踪日志
-        logger.info(f"🔍 [股票代码追踪] 基本面分析师接收到的原始股票代码: '{ticker}' (类型: {type(ticker)})")
-        logger.info(f"🔍 [股票代码追踪] 股票代码长度: {len(str(ticker))}")
-        logger.info(f"🔍 [股票代码追踪] 股票代码字符: {list(str(ticker))}")
 
         market_info = StockUtils.get_market_info(ticker)
         logger.info(f"🔍 [股票代码追踪] StockUtils.get_market_info 返回的市场信息: {market_info}")
@@ -304,33 +301,33 @@ def create_fundamentals_analyst(llm, toolkit):
 
         logger.info(f"📊 [基本面分析师] 开始调用LLM...")
 
-        # 添加详细的股票代码追踪日志
-        logger.info(f"🔍 [股票代码追踪] LLM调用前，ticker参数: '{ticker}'")
-        logger.info(f"🔍 [股票代码追踪] 传递给LLM的消息数量: {len(state['messages'])}")
+        # # 添加详细的股票代码追踪日志
+        # logger.info(f"🔍 [股票代码追踪] LLM调用前，ticker参数: '{ticker}'")
+        # logger.info(f"🔍 [股票代码追踪] 传递给LLM的消息数量: {len(state['messages'])}")
 
-        # 🔥 打印提交给大模型的完整内容
-        logger.info("=" * 80)
-        logger.info("📝 [提示词调试] 开始打印提交给大模型的完整内容")
-        logger.info("=" * 80)
+        # # 🔥 打印提交给大模型的完整内容
+        # logger.info("=" * 80)
+        # logger.info("📝 [提示词调试] 开始打印提交给大模型的完整内容")
+        # logger.info("=" * 80)
 
-        # 1. 打印系统提示词
-        logger.info("📋 [提示词调试] 1️⃣ 系统提示词 (System Message):")
-        logger.info("-" * 80)
-        logger.info(system_message)
-        logger.info("-" * 80)
+        # # 1. 打印系统提示词
+        # logger.info("📋 [提示词调试] 1️⃣ 系统提示词 (System Message):")
+        # logger.info("-" * 80)
+        # logger.info(system_message)
+        # logger.info("-" * 80)
 
-        # 2. 打印完整的提示模板
-        logger.info("📋 [提示词调试] 2️⃣ 完整提示模板 (Prompt Template):")
-        logger.info("-" * 80)
-        logger.info(f"工具名称: {', '.join(tool_names)}")
-        logger.info(f"当前日期: {current_date}")
-        logger.info(f"股票代码: {ticker}")
-        logger.info(f"公司名称: {company_name}")
-        logger.info("-" * 80)
+        # # 2. 打印完整的提示模板
+        # logger.info("📋 [提示词调试] 2️⃣ 完整提示模板 (Prompt Template):")
+        # logger.info("-" * 80)
+        # logger.info(f"工具名称: {', '.join(tool_names)}")
+        # logger.info(f"当前日期: {current_date}")
+        # logger.info(f"股票代码: {ticker}")
+        # logger.info(f"公司名称: {company_name}")
+        # logger.info("-" * 80)
 
-        # 3. 打印消息历史
-        logger.info("📋 [提示词调试] 3️⃣ 消息历史 (Message History):")
-        logger.info("-" * 80)
+        # # 3. 打印消息历史
+        # logger.info("📋 [提示词调试] 3️⃣ 消息历史 (Message History):")
+        # logger.info("-" * 80)
         for i, msg in enumerate(state['messages']):
             msg_type = type(msg).__name__
             if hasattr(msg, 'content'):

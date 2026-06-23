@@ -20,7 +20,7 @@ except ImportError:
     ts = None
 
 logger = logging.getLogger(__name__)
-logging.disabled = True
+logger.disabled = True
 
 class TushareProvider(BaseStockDataProvider):
     """

@@ -198,6 +198,68 @@ class ConditionalLogic:
         logger.info(f"🔀 [条件判断] ✅ 无tool_calls，返回: Msg Clear Fundamentals")
         return "Msg Clear Fundamentals"
 
+    def should_continue_china_market(self, state: AgentState):
+        """判断中国市场分析是否应该继续"""
+        from tradingagents.utils.logging_init import get_logger
+        logger = get_logger("agents")
+
+        messages = state["messages"]
+        last_message = messages[-1]
+
+        # 死循环修复: 添加工具调用次数检查
+        tool_call_count = state.get("china_market_tool_call_count", 0)
+        max_tool_calls = 3
+
+        # 检查是否已经有中国市场报告
+        china_market_report = state.get("china_market_report", "")
+
+        logger.info(f"🔀 [条件判断] should_continue_china_market")
+        logger.info(f"🔀 [条件判断] - 消息数量: {len(messages)}")
+        logger.info(f"🔀 [条件判断] - 报告长度: {len(china_market_report)}")
+        logger.info(f"🔧 [死循环修复] - 工具调用次数: {tool_call_count}/{max_tool_calls}")
+        logger.info(f"🔀 [条件判断] - 最后消息类型: {type(last_message).__name__}")
+        
+        # 🔍 [调试日志] 打印最后一条消息的详细内容
+        logger.info(f"🤖 [条件判断] 最后一条消息详细内容:")
+        logger.info(f"🤖 [条件判断] - 消息类型: {type(last_message).__name__}")
+        if hasattr(last_message, 'content'):
+            content_preview = last_message.content[:300] + "..." if len(last_message.content) > 300 else last_message.content
+            logger.info(f"🤖 [条件判断] - 内容预览: {content_preview}")
+        
+        # 🔍 [调试日志] 打印tool_calls的详细信息
+        logger.info(f"🔀 [条件判断] - 是否有tool_calls: {hasattr(last_message, 'tool_calls')}")
+        if hasattr(last_message, 'tool_calls'):
+            logger.info(f"🔀 [条件判断] - tool_calls数量: {len(last_message.tool_calls) if last_message.tool_calls else 0}")
+            if last_message.tool_calls:
+                logger.info(f"🔧 [条件判断] 检测到 {len(last_message.tool_calls)} 个工具调用:")
+                for i, tc in enumerate(last_message.tool_calls):
+                    logger.info(f"🔧 [条件判断] - 工具调用 {i+1}: {tc.get('name', 'unknown')} (ID: {tc.get('id', 'unknown')})")
+                    if 'args' in tc:
+                        logger.info(f"🔧 [条件判断] - 参数: {tc['args']}")
+            else:
+                logger.info(f"🔧 [条件判断] tool_calls为空列表")
+        else:
+            logger.info(f"🔧 [条件判断] 无tool_calls属性")
+
+        # ✅ 优先级1: 如果已经有报告内容，说明分析已完成，不再循环
+        if china_market_report and len(china_market_report) > 100:
+            logger.info(f"🔀 [条件判断] ✅ 报告已完成，返回: Msg Clear China_market")
+            return "Msg Clear China_market"
+
+        # ✅ 优先级2: 如果有tool_calls，去执行工具
+        if hasattr(last_message, 'tool_calls') and last_message.tool_calls:
+            # 检查是否超过最大调用次数
+            if tool_call_count >= max_tool_calls:
+                logger.warning(f"🔧 [死循环修复] 工具调用次数已达上限({tool_call_count}/{max_tool_calls})，但仍有tool_calls，强制结束")
+                return "Msg Clear China_market"
+
+            logger.info(f"🔀 [条件判断] 🔧 检测到tool_calls，返回: tools_china_market")
+            return "tools_china_market"
+
+        # ✅ 优先级3: 没有tool_calls，正常结束
+        logger.info(f"🔀 [条件判断] ✅ 无tool_calls，返回: Msg Clear China_market")
+        return "Msg Clear China_market"
+
     def should_continue_debate(self, state: AgentState) -> str:
         """Determine if debate should continue."""
         current_count = state["investment_debate_state"]["count"]

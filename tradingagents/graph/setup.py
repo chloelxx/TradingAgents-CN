@@ -59,6 +59,7 @@ class GraphSetup:
                 - "social": Social media analyst
                 - "news": News analyst
                 - "fundamentals": Fundamentals analyst
+                - "china_market": China market analyst
         """
         if len(selected_analysts) == 0:
             raise ValueError("Trading Agents Graph Setup Error: no analysts selected!")
@@ -247,7 +248,35 @@ class GraphSetup:
             },
         )
 
-        workflow.add_edge("Risk Judge", END)
+        workflow.add_edge("Risk Judge", "China_market Analyst")
+
+        # ========== 中国市场汇总评定节点（在所有分析完成后执行） ==========
+        from tradingagents.agents.analysts.china_market_analyst import create_china_market_analyst
+        logger.info(f"🇨🇳 [INFO] 使用中国市场分析师（汇总评定模式）")
+
+        china_market_node = create_china_market_analyst(
+            self.quick_thinking_llm, self.toolkit
+        )
+        china_market_clear_node = create_msg_delete()
+        china_market_tool_node = ToolNode(
+            [
+                self.toolkit.get_china_stock_data,
+                self.toolkit.get_china_market_overview,
+                self.toolkit.get_YFin_data_online,
+            ]
+        )
+
+        workflow.add_node("China_market Analyst", china_market_node)
+        workflow.add_node("Msg Clear China_market", china_market_clear_node)
+        workflow.add_node("tools_china_market", china_market_tool_node)
+
+        workflow.add_conditional_edges(
+            "China_market Analyst",
+            self.conditional_logic.should_continue_china_market,
+            ["tools_china_market", "Msg Clear China_market"],
+        )
+        workflow.add_edge("tools_china_market", "China_market Analyst")
+        workflow.add_edge("Msg Clear China_market", END)
 
         # Compile and return
         return workflow.compile()
