@@ -63,7 +63,7 @@ def _parse_size(size_str: str) -> int:
             return 10 * 1024 * 1024
     return 10 * 1024 * 1024
 
-def setup_logging(log_level: str = "INFO"):
+def setup_logging(log_level: str = "CRITICAL"):
     """
     设置应用日志配置：
     1) 优先尝试从 config/logging.toml 读取并转化为 dictConfig

@@ -1170,8 +1170,8 @@ function exportReport() {
   link.href = url
 
   // 使用分析日期作为文件名（简化格式）
-  const fileDate = lastAnalysis.value.analysis_date || new Date().toISOString().slice(0, 10)
-  link.download = `${code.value}_分析报告_${fileDate}.md`
+  const fileDate = lastAnalysis.value.analysis_date || new Date().toISOString().slice(0, 14)
+  link.download = `${stockName.value}${code.value}_分析报告_${fileDate}.md`
   document.body.appendChild(link)
   link.click()
   document.body.removeChild(link)

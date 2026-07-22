@@ -85,7 +85,7 @@ class TradingAgentsLogger:
             return config
 
         # 从环境变量获取配置
-        log_level = os.getenv('TRADINGAGENTS_LOG_LEVEL', 'INFO').upper()
+        log_level = os.getenv('TRADINGAGENTS_LOG_LEVEL', 'CRITICAL').upper()
         log_dir = os.getenv('TRADINGAGENTS_LOG_DIR', './logs')
 
         return {

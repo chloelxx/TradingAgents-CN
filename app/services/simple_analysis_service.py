@@ -2395,7 +2395,6 @@ class SimpleAnalysisService:
             timestamp = datetime.utcnow()  # 存储 UTC 时间（标准做法）
             stock_symbol = result.get('stock_symbol') or result.get('stock_code', 'UNKNOWN')
             analysis_id = f"{stock_symbol}_{timestamp.strftime('%Y%m%d_%H%M%S')}"
-            logger.info(f"📊 最后生成的result====: {result}")
             
             # 处理reports字段 - 从state中提取所有分析报告
             reports = {}

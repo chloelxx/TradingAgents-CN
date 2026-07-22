@@ -241,10 +241,24 @@ async def lifespan(app: FastAPI):
     try:
         from app.services.config_provider import provider as config_provider  # local import to avoid early DB init issues
         eff = await config_provider.get_effective_system_settings()
-        desired_level = str(eff.get("log_level", "INFO")).upper()
+        desired_level = str(eff.get("log_level", "CRITICAL")).upper()
         setup_logging(log_level=desired_level)
         for name in ("webapi", "worker", "uvicorn", "fastapi"):
             logging.getLogger(name).setLevel(desired_level)
+
+        # ===== 全局日志静默 =====
+        # 设置 root logger 为 CRITICAL，所有模块默认不输出日志
+        logging.getLogger().setLevel("CRITICAL")
+
+        # 白名单：只开启需要的模块（按需取消注释）
+        logging.getLogger("app.services.sector_analysis_service").setLevel("INFO")
+        logging.getLogger("webapi.sector_analysis").setLevel("INFO")
+        # logging.getLogger("app.services.simple_analysis_service").setLevel("INFO")
+
+        # 静默第三方库噪音
+        for lib in ("urllib3", "requests", "httpx", "pymongo", "apscheduler",
+                    "apscheduler.scheduler", "apscheduler.executors"):
+            logging.getLogger(lib).setLevel("WARNING")
         try:
             from app.middleware.operation_log_middleware import set_operation_log_enabled
             set_operation_log_enabled(bool(eff.get("enable_monitoring", True)))
@@ -569,6 +583,35 @@ async def lifespan(app: FastAPI):
         else:
             logger.info(f"📰 新闻数据同步已配置（仅自选股）: {settings.NEWS_SYNC_CRON}")
 
+        # ==================== 全量A股股票信息同步任务 start====================
+        # logger.info("🔄 配置全量A股股票信息同步任务...")
+
+        # from app.worker.all_stocks_sync import run_all_stocks_info_sync
+
+        # if settings.ALL_STOCKS_SYNC_CRON:
+        #     scheduler.add_job(
+        #         run_all_stocks_info_sync,
+        #         CronTrigger.from_crontab(settings.ALL_STOCKS_SYNC_CRON, timezone=settings.TIMEZONE),
+        #         id="all_stocks_info_sync",
+        #         name="全量A股股票信息同步（all_stocks_info）"
+        #     )
+        #     logger.info(f"📅 全量A股股票信息同步已配置: {settings.ALL_STOCKS_SYNC_CRON}")
+        # else:
+        #     hh, mm = settings.ALL_STOCKS_SYNC_TIME.split(":")
+        #     scheduler.add_job(
+        #         run_all_stocks_info_sync,
+        #         CronTrigger(hour=int(hh), minute=int(mm), timezone=settings.TIMEZONE),
+        #         id="all_stocks_info_sync",
+        #         name="全量A股股票信息同步（all_stocks_info）"
+        #     )
+        #     logger.info(f"📅 全量A股股票信息同步已配置: 每日 {settings.ALL_STOCKS_SYNC_TIME}")
+
+        # if not settings.ALL_STOCKS_SYNC_ENABLED:
+        #     scheduler.pause_job("all_stocks_info_sync")
+        #     logger.info(f"⏸️ 全量A股股票信息同步已添加但暂停")
+ 
+        # ==================== 全量A股股票信息同步任务 end ====================
+
         scheduler.start()
 
         # 设置调度器实例到服务中，以便API可以管理任务
@@ -730,9 +773,13 @@ app.include_router(social_media.router, tags=["social-media"])
 app.include_router(internal_messages.router, tags=["internal-messages"])
 
 
-# AI 股票筛选路由
+# # AI 股票筛选路由
 # from app.routers import search as search_router
 # app.include_router(search_router.router, prefix="/api/search", tags=["search"])
+
+# 板块分析路由
+from app.routers import sector_analysis as sector_analysis_router
+app.include_router(sector_analysis_router.router, prefix="/api/sector", tags=["sector-analysis"])
 
 @app.get("/")
 async def root():

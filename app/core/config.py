@@ -158,6 +158,13 @@ class Settings(BaseSettings):
     # 时区
     TIMEZONE: str = Field(default="Asia/Shanghai")
 
+    # 全量A股股票信息同步任务配置（all_stocks_info 集合）
+    ALL_STOCKS_SYNC_ENABLED: bool = Field(default=True)
+    # 优先使用 CRON 表达式，例如 "0 3 * * *" 表示每日凌晨3:00
+    ALL_STOCKS_SYNC_CRON: str = Field(default="")
+    # 若未提供 CRON，则使用简单时间字符串 "HH:MM"（24小时制），默认凌晨3点
+    ALL_STOCKS_SYNC_TIME: str = Field(default="11:30")
+
     # 实时行情入库任务
     QUOTES_INGEST_ENABLED: bool = Field(default=True)
     QUOTES_INGEST_INTERVAL_SECONDS: int = Field(

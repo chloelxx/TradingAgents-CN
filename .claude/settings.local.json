@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls e:/TradingAgents-CN/tradingagents/utils/logging_init*.py)",
+      "Bash(grep -rn get_tushare_adapter e:/TradingAgents-CN/tradingagents/ --include=*.py)",
+      "Bash(ls e:/TradingAgents-CN/tradingagents/dataflows/providers/china/*adapter*)"
+    ]
+  }
+}

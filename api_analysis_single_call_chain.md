@@ -410,3 +410,50 @@ Fundamentals Analyst 节点
 ---
 
 **文档生成时间**: 2026-06-17
+
+输出结构：
+```
+{
+    "analysis_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "stock_code": "600519.SH",
+    "stock_symbol": "600519.SH",
+    "analysis_date": "2024-01-15",
+    "summary": "贵州茅台（600519.SH）近期表现稳健，基本面强劲...",
+    "recommendation": "投资建议：买入。目标价格：1850.0元。决策依据：基于综合分析...",
+    "confidence_score": 0.78,
+    "risk_level": "中等",
+    "key_points": [],
+    "detailed_analysis": {
+        "action": "BUY",
+        "confidence": 0.78,
+        "target_price": "1850",
+        "reasoning": "..."
+    },
+    "execution_time": 45.67,
+    "tokens_used": 15600,
+    "state": {...},
+    "analysts": ["market", "fundamentals", "news"],
+    "research_depth": "标准",
+    "reports": {
+        "market_report": "市场分析师报告内容...",
+        "fundamentals_report": "基本面分析师报告内容...",
+        "news_report": "新闻分析师报告内容...",
+        "final_trade_decision": "最终交易决策内容...",
+        "bull_researcher": "多头研究员论据...",
+        "bear_researcher": "空头研究员风险...",
+        "research_team_decision": "研究团队共识...",
+        "risky_analyst": "激进风险评估...",
+        "safe_analyst": "保守风险评估...",
+        "risk_management_decision": "风险管理决策..."
+    },
+    "decision": {
+        "action": "买入",
+        "confidence": 0.78,
+        "risk_score": 0.35,
+        "target_price": 1850.0,
+        "reasoning": "综合分析显示..."
+    },
+    "model_info": "qwen-turbo",
+    "performance_metrics": {}
+}
+```
