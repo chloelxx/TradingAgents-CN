@@ -16,6 +16,7 @@ from app.routers.auth_db import get_current_user
 from app.services.queue_service import get_queue_service, QueueService
 from app.services.analysis_service import get_analysis_service
 from app.services.simple_analysis_service import get_simple_analysis_service
+from app.services.market_analysis_service import get_market_analysis_service
 from app.services.websocket_manager import get_websocket_manager
 from app.models.analysis import (
     SingleAnalysisRequest, BatchAnalysisRequest, AnalysisParameters,
@@ -91,6 +92,47 @@ async def submit_single_analysis(
         }
     except Exception as e:
         logger.error(f"❌ 提交单股分析任务失败: {e}")
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.post("/all", response_model=Dict[str, Any])
+async def submit_market_analysis(
+    background_tasks: BackgroundTasks,
+    user: dict = Depends(get_current_user)
+):
+    """提交大盘分析任务 - 使用 BackgroundTasks 异步执行"""
+    try:
+        logger.info(f"🎯 收到大盘分析请求")
+        logger.info(f"👤 用户信息: {user}")
+
+        market_service = get_market_analysis_service()
+        result = await market_service.create_task(user["id"])
+
+        task_id = result["task_id"]
+        user_id = user["id"]
+
+        async def run_market_analysis_task():
+            try:
+                logger.info(f"===📝 [BackgroundTask] 开始执行大盘分析任务 task_id={task_id}, user_id={user_id}")
+
+                service = get_market_analysis_service()
+                await service.execute_background(task_id, user_id)
+
+                logger.info(f"✅ [BackgroundTask] 大盘分析任务完成: {task_id}")
+            except Exception as e:
+                logger.error(f"❌ [BackgroundTask] 大盘分析任务失败: {task_id}, 错误: {e}", exc_info=True)
+
+        background_tasks.add_task(run_market_analysis_task)
+
+        logger.info(f"✅ 大盘分析任务已在后台启动: {result}")
+
+        return {
+            "success": True,
+            "data": result,
+            "message": "大盘分析任务已在后台启动"
+        }
+    except Exception as e:
+        logger.error(f"❌ 提交大盘分析任务失败: {e}")
         raise HTTPException(status_code=400, detail=str(e))
 
 
@@ -256,16 +298,22 @@ async def get_task_result(
             from app.core.database import get_mongo_db
             db = get_mongo_db()
 
-            # 从analysis_reports集合中查找（优先使用 task_id 匹配）
-            mongo_result = await db.analysis_reports.find_one({"task_id": task_id})
+            # 优先从 market_analysis 集合查找（大盘分析）
+            mongo_result = await db.market_analysis.find_one({"task_id": task_id})
+
+            # 再从 analysis_reports 集合查找（个股分析）
+            if not mongo_result:
+                mongo_result = await db.analysis_reports.find_one({"task_id": task_id})
 
             if not mongo_result:
                 # 兼容旧数据：旧记录可能没有 task_id，但 analysis_id 存在于 analysis_tasks.result
                 tasks_doc_for_id = await db.analysis_tasks.find_one({"task_id": task_id}, {"result.analysis_id": 1})
                 analysis_id = tasks_doc_for_id.get("result", {}).get("analysis_id") if tasks_doc_for_id else None
                 if analysis_id:
-                    logger.info(f"🔎 [RESULT] 按analysis_id兜底查询 analysis_reports: {analysis_id}")
-                    mongo_result = await db.analysis_reports.find_one({"analysis_id": analysis_id})
+                    logger.info(f"🔎 [RESULT] 按analysis_id兜底查询 market_analysis: {analysis_id}")
+                    mongo_result = await db.market_analysis.find_one({"analysis_id": analysis_id})
+                    if not mongo_result:
+                        mongo_result = await db.analysis_reports.find_one({"analysis_id": analysis_id})
 
             if mongo_result:
                 logger.info(f"✅ [RESULT] 从MongoDB找到结果: {task_id}")
@@ -292,6 +340,14 @@ async def get_task_result(
                     "decision": mongo_result.get("decision", {}),
                     "source": "mongodb"  # 标记数据来源
                 }
+
+                # 大盘分析额外字段
+                if mongo_result.get("analysis_type") == "market":
+                    result_data["index_data"] = mongo_result.get("index_data", [])
+                    result_data["market_breadth"] = mongo_result.get("market_breadth", {})
+                    result_data["market_news"] = mongo_result.get("market_news", {})
+                    result_data["ai_report"] = mongo_result.get("ai_report", "")
+                    result_data["stock_name"] = mongo_result.get("stock_name", "大盘分析")
 
                 # 添加调试信息
                 logger.info(f"📊 [RESULT] MongoDB数据结构: {list(result_data.keys())}")
@@ -336,6 +392,14 @@ async def get_task_result(
                         "decision": r.get("decision", {}),
                         "source": "analysis_tasks"  # 数据来源标记
                     }
+
+                    # 大盘分析额外字段
+                    if r.get("analysis_type") == "market":
+                        result_data["index_data"] = r.get("index_data", [])
+                        result_data["market_breadth"] = r.get("market_breadth", {})
+                        result_data["market_news"] = r.get("market_news", {})
+                        result_data["ai_report"] = r.get("ai_report", "")
+                        result_data["stock_name"] = r.get("stock_name", "大盘分析")
 
         if not result_data:
             logger.warning(f"❌ [RESULT] 所有数据源都未找到结果: {task_id}")
@@ -660,6 +724,18 @@ async def get_task_result(
             # 🔥 关键修复：添加decision字段！
             "decision": safe_dict(result_data.get("decision"))
         }
+
+        # 大盘分析额外字段透传
+        if result_data.get("ai_report"):
+            final_result_data["ai_report"] = safe_string(result_data.get("ai_report"))
+        if result_data.get("index_data"):
+            final_result_data["index_data"] = result_data.get("index_data", [])
+        if result_data.get("market_breadth"):
+            final_result_data["market_breadth"] = result_data.get("market_breadth", {})
+        if result_data.get("market_news"):
+            final_result_data["market_news"] = result_data.get("market_news", {})
+        if result_data.get("stock_name"):
+            final_result_data["stock_name"] = safe_string(result_data.get("stock_name"))
 
         # 特别处理reports字段 - 确保每个报告都是有效字符串
         reports_data = safe_dict(result_data.get("reports"))
